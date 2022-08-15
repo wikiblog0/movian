@@ -5,87 +5,86 @@ Movian mediaplayer
 
 [![Build status](https://doozer.io/badge/andoma/movian/buildstatus/master)](https://doozer.io/user/andoma/movian)
 
-For more information and latest versions, please visit:
+Para mas informacion acerca de la aplicacion, por favor visitar:
 
 [https://movian.tv/](https://movian.tv/)
 
-## How to build for Linux
+Este repositorio aloja el codigo fuente del port para Wii y la ultima version del codigo fuente de Movian alojado en el github oficial. Por lo que he visto el codigo fuente actualizado a la ultima version oficial de Movian que es la 5.0.548 esta alojado en la pagina web de la aplicacion, en este enlace podran verlo: https://movian.tv/projects/movian/repository?utf8=%E2%9C%93&rev=master
 
-First you need to satisfy some dependencies (for Ubuntu 16.04.3 LTS)
+## Como crear tu distribucion en Wii
 
-	sudo apt-get install libfreetype6-dev libfontconfig1-dev libxext-dev libgl1-mesa-dev libasound2-dev libasound2-dev libgtk2.0-dev libxss-dev libxxf86vm-dev libxv-dev libvdpau-dev yasm libpulse-dev libssl-dev curl libwebkitgtk-dev libsqlite3-dev libavahi-client-dev
+Para hacer tu distribucion de Wii con el codigo fuente existente (fixwii) necesitas:
 
-Then you need to configure:
+- devkitPro:
+    devkitPPC r21
+    libogc 1.8.3
+    libfat-ogc 1.0.5
+- freetype cross-compiled for PPC.
 
-	./configure
+Para tu conveniencia hay un script que descarga/crea todo lo necesario. Para ejecutarlo solo escribe:
 
-If your system lacks libwebkitgtk or some other lib you can configure like this:
+$ support/wiisetup
 
-	./configure --disable-webkit
+Haga esto directamente desde el directorio raíz de Showtime. Esto descargará, descomprimira, creara e instalara todo lo necesario en el directorio wiisupport
+Por defecto configure.wii buscará en estos directorios para devkitPro y freetype, así que todo lo que tiene que hacer ahora es: 
 
-If any dependencies are missing the configure script will complain.
-You then have the option to disable that particular module/subsystem.
+$ ./configure.wii
+$ make
 
-	make
+Si tiene devkitpro y/o freetype en otro directorio, puede configurar la ruta de ellos en configure.wii (ver ./configure.wii --help para más detalles)
 
-Build the binary, after build the binary resides in `./build.linux/`.
-Thus, to start it, just type:
+Nota: el valor predeterminado de libogc es un máximo de 16 threads. Esto está al borde de la aplicacion movian (showtime nombre anterior). Por lo tanto, el script wiisetup instalara una nueva versión de lwp_config.h (consulte support/lwp_config.h) antes de compilar libogc. Si tiene la intención de usar un stock libogc, debe tener en cuenta este hecho.
 
-	./build.linux/movian
+# Paquete Homebrew
 
-Settings are stored in `~/.hts/showtime`
+El sistema makefile puede construir un paquete homebrew. Para hacer esto, escriba:
 
-If you want to build with extra debugging options for development these options might be of interest:
+$ make homebrew
 
-	--cc=gcc-5 --extra-cflags=-fno-omit-frame-pointer --optlevel=g --sanitize=address --enable-bughunt
+La salida residirá en "build.wii/bundle/". Tanto un directorio para aplicaciones
+y un archivo zip es lo que generara.
 
+## Observaciones
 
-## How to build for Mac OS X
+A pesar que dejo las instrucciones de como compilar la version existente del port de Wii, el principal objetivo es actualizar la aplicacion a la ultima version de Movian para que sea compatible con los plugins disponibles que hay en la actualidad y los que puedan aparecer para asi habilitar servicios de streaming que habian en Wii y Wii U como youtube o Netflix o que nunca hubieron como Twitch. Para este caso necesitan agregar las ultimas novedades que tiene la ultima version del codigo fuente que esta alojado en la pagina web de Movian: https://movian.tv/projects/movian/repository?utf8=%E2%9C%93&rev=master o en caso que la pagina este caida pueden usar el codigo fuente que dejare en la seccion de release sin embargo como mencione anteriormente ese codigo fuente no es la ultima version.
 
-To build for Mac OS X you need Xcode and yasm. Xcode should be installed from Mac Appstore.
+En la seccion de programacion dejare los enlances de las herramientas necesarias para que puedan actualizar las librerias que utiliza Movian a demas que actulicen las librerias utilizadas por el port de Wii para que estas sean compatibles con la virtual wii de Wii U y se pueda usar el gamepad y el overclock para mejorar el desempeño de la aplicacion.
 
-To install yasm, install [Brew](http://brew.sh/) and then
+Por ultimo, el segundo objetivo que tengo con este repositorio es que el programador o programadores que quieran retomar el proyecto y actualizar la aplicacion con las ultimas librerias disponibles, es que una vez que la version de wii/virtual wii de Wii U sea estable se pueda hacer un port nativo a Wii U para aprovechar la resolucion hd de la consola y ademas de enriquecer el homebrew de Wii U con un centro multimedia digno que ayude a habilitar los servicios de streaming que habian en Wii U y de enriquecer con otros servicios que no estaban pero que serian provechos tenerlos en Wii U. Para esto es necesario que el programador aprenda a crear plugins para los servicios de streaming que la comunidad o el quiera traer para Wii o Wii U. Aqui dejo el link de la guia para crear plugins para movian: https://movian.tv/projects/movian/wiki/PluginDevelopment 
+Dejo la guia de como publicar tus plugins, link: https://movian.tv/projects/movian/wiki/PluginPublishing 
 
-	$ brew install yasm
+# Programacion
 
-Now run configure
+En esta seccion dejare los links de las herramientas necesarias para Wii/virtual wii y Wii U:
 
-	$ ./configure
+## Wii/Virtual wii
 
-Or if you build for release
+- [devkitpro installer](https://github.com/devkitPro/installer/releases) este sirve para instalar y actualizar las herramientas y librerias que proporciona devkitpro.
+- [libogc](https://github.com/devkitPro/libogc/releases) Libreria en lenguaje c para aplicaciones homebrew de Wii y Gamecube.
+- [libwiidrc](https://github.com/FIX94/libwiidrc/releases)Libreria especial para hacer compatible la Wii U gamepad en aplicaciones homebrew de Wii U.
+- [pacman](https://github.com/devkitPro/pacman/releases) Libreria de devkitpro que descarga la sublibreria de devkitppc necesaria para crear la distribucion de wii.
 
-	$ ./configure --release
+## Librerias que se van a ocupar para hacer el port de Wii U
+- [pacman](https://github.com/devkitPro/pacman/releases) Libreria de devkitpro que descarga la sublibreria de devkitppc que va ser necesaria para hacer el port de 
+Wii U.
+- [Wii U Toolkit (WUT)](https://github.com/devkitPro/wut/releases) libreria para crear los ejecutables de las aplicaciones homebrew de Wii U rpx/rpl
+- [SDL](https://github.com/yawut/SDL/releases) port de la libreria sdl2 para su uso en homebrew de Wii U.
 
-If configured successfully run:
+## Posibles herramientas que se puedan ocupar en Wii U:
+- [gx2textureShader](https://github.com/rw-r-r-0644/gx2textureShader) es una simple aplicacion para renderizar graficos 2D en Wii U.
+- [librw](https://github.com/GaryOderNichts/librw) reimplementacion de la RenderWare Graphics engine en los renderizados 3D de los graficos gx2 de la Wii U. Esta libreria se utilizo para renderizar los graficos de los ports de Wii U de los GTA 3 y GTA Vice City.
 
-	$ make
+## Para las herramientas de devkitpro dejo los siguientes enlaces que le serviran de guia para su uso: 
+- https://devkitpro.org/wiki/Getting_Started
+- https://devkitpro.org/wiki/devkitPro_pacman
 
-Run Movian binary from build directory
+## Para hacer pruebas al ejecutable rpx/rpl de Wii U se ocupan estas herramientas:
+- [RPL Studio](https://github.com/BullyWiiPlaza/RPL-Studio)
+- [RPL2elf](https://gbatemp.net/threads/tutorial-how-to-decompress-and-repack-rpx-rpl-files.399934/) Para mas informacion visitar este link:https://github.com/Relys/rpl2elf
+- [RPXReader](https://github.com/phacoxcll/RPXReader)
 
-	$ build.osx/Movian.app/Contents/MacOS/movian
+# Notas finales para los programadores que quieran hacer el port de Wii U:
+Para los usuarios de Wii U o emulador CEMU que tengan conocimiento en programacion y quieren entrar al mundo de desarrollo de aplicaciones o emuladores homebrew de Wii U, les dejo el link a la guia de programacion de Yawt donde se explica al detalle como comenzar a programar y lo que se necesita. 
+Link: https://github.com/yawut/ProgrammingOnTheU/blob/master/tutorial/Chapter%201.md 
 
-Note that in this case Movian loads all resources from current directory
-so this binary can't be run elsewhere.
-
-If you want a build that can be run as a normal Mac Application you shold do
-
-	$ make dist
-
-This will generate a DMG
-
-## How to build for PS3 with PSL1GHT
-
-$ ./Autobuild.sh -t ps3 -v 5.0.500
-
-## How to build for Raspberry Pi
-
-First you need to satisfy some dependencies (for Ubuntu 16.04.3 LTS 64bit):
-
-	sudo apt-get install git-core build-essential autoconf bison flex libelf-dev libtool pkg-config texinfo libncurses5-dev libz-dev python-dev libssl-dev libgmp3-dev ccache zip squashfs-tools
-
-$ ./Autobuild.sh -t rpi -v 5.0.500
-
-To update Movian on rpi with compiled one, enable Binreplace in settings:dev and issue:
-
-	curl --data-binary @build.rpi/showtime.sqfs http://rpi_ip_address:42000/api/replace
-
+Finalmente  les dejo el blog de Clownacy donde explica de manera general como hacer ports de aplicaciones o juegos android a Wii U. Link: https://clownacy.wordpress.com/2021/02/12/porting-sonic-cd-2011-to-the-wii-u/
