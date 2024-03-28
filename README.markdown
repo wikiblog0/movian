@@ -9,7 +9,7 @@ Para mas informacion acerca de la aplicacion, por favor visitar:
 
 [https://apps.movian.eu/](https://apps.movian.eu/)
 
-Este repositorio aloja el codigo fuente del port para Wii y la ultima version del codigo fuente de Movian alojado en el github oficial. Por lo que he visto el codigo fuente actualizado a la ultima version oficial de Movian que es la 5.0.548 esta alojado en la pagina web de la aplicacion, en este enlace podran verlo: https://movian.tv/projects/movian/repository?utf8=%E2%9C%93&rev=master
+Este repositorio aloja el codigo fuente del port para Wii y la ultima version del codigo fuente de Movian alojado en el github oficial.
 
 ## Como crear tu distribucion en Wii
 
